@@ -14160,19 +14160,111 @@ var toConsumableArray = function (arr) {
   }
 };
 
-// import bodymovin from './bodymovin';
+var Event = function () {
+  function Event() {
+    classCallCheck(this, Event);
 
-var _class = function () {
-  function _class(options) {
-    var _this = this;
+    this.bindings = {};
+  }
 
-    classCallCheck(this, _class);
+  createClass(Event, [{
+    key: 'on',
+    value: function on(event, handler) {
+      var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-    this.options = options;
-    this.scenes = options.scenes;
-    this.anims = [];
-    this.el = document.querySelector(options.container);
-    this.index = 0;
+      var e = this.bindings[event];
+      var h = {
+        handler: handler,
+        once: once
+      };
+      var index;
+
+      if (typeof e === 'undefined') {
+        this.bindings[event] = [h];
+      } else {
+        index = this.bindings[event].findIndex(function (el) {
+          return handler.toString() === el.handler.toString();
+        });
+        if (index === -1) {
+          e.push(h);
+        }
+      }
+    }
+  }, {
+    key: 'off',
+    value: function off(event) {
+      var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      var index;
+
+      if (handler === null) {
+        delete this.bindings[event];
+      } else {
+        index = this.bindings[event].findIndex(function (el) {
+          return handler.toString() === el.handler.toString();
+        });
+        this.bindings[event].splice(index, 1);
+      }
+    }
+  }, {
+    key: 'trigger',
+    value: function trigger(event, params) {
+      var _this = this;
+
+      var e = this.bindings[event];
+
+      if (typeof e !== 'undefined') {
+        e.forEach(function (el) {
+          el.handler(params);
+          if (el.once) {
+            _this.off(event, el.handler);
+          }
+        });
+      }
+    }
+  }]);
+  return Event;
+}();
+
+/* eslint-disable */
+if (!Array.prototype.findIndex) {
+  Array.prototype.findIndex = function (predicate) {
+    if (this === null) {
+      throw new TypeError('Array.prototype.findIndex called on null or undefined');
+    }
+    if (typeof predicate !== 'function') {
+      throw new TypeError('predicate must be a function');
+    }
+    var list = Object(this);
+    var length = list.length >>> 0;
+    var thisArg = arguments[1];
+    var value;
+
+    for (var i = 0; i < length; i++) {
+      value = list[i];
+      if (predicate.call(thisArg, value, i, list)) {
+        return i;
+      }
+    }
+    return -1;
+  };
+}
+/* eslint-enable */
+
+var Player = function (_Event) {
+  inherits(Player, _Event);
+
+  function Player(options) {
+    classCallCheck(this, Player);
+
+    var _this = possibleConstructorReturn(this, (Player.__proto__ || Object.getPrototypeOf(Player)).call(this));
+
+    var delay;
+    _this.options = options;
+    _this.scenes = options.scenes;
+    _this.anims = [];
+    _this.el = document.querySelector(options.container);
+    _this.index = 0;
 
     options.scenes.forEach(function (s, i) {
       var div = document.createElement('div');
@@ -14186,12 +14278,18 @@ var _class = function () {
       _this.anims[i] = lottie.loadAnimation(s);
     });
 
-    if (options.autoplay) {
-      this.play(this.index);
+    if (typeof options.autoplay === 'boolean' && options.autoplay) {
+      _this.play(_this.index);
+    } else if (typeof options.autoplay === 'number' || typeof options.autoplay === 'string') {
+      delay = Number(options.autoplay);
+      setTimeout(function () {
+        return _this.play(_this.index);
+      }, delay * 1000);
     }
+    return _this;
   }
 
-  createClass(_class, [{
+  createClass(Player, [{
     key: 'play',
     value: function play(index) {
       var _this2 = this;
@@ -14201,6 +14299,7 @@ var _class = function () {
       index = index || 0;
 
       if (index === 0) {
+        this.trigger('start');
         this.options.onStart && this.options.onStart();
       }
 
@@ -14208,15 +14307,14 @@ var _class = function () {
       scene = this.scenes[index];
 
       if (!scene) {
+        this.trigger('finish');
         this.options.onFinish && this.options.onFinish();
         return;
       }
 
-      console.log('Playing ', scene.path);
       anim = this.anims[index];
       speed = typeof scene.speed === 'undefined' ? '1' : scene.speed;
       reverse = typeof scene.reverse === 'undefined' ? false : scene.reverse;
-      console.log(speed, reverse);
 
       if (this.actualScene) {
         this.actualScene.container.classList.remove('active');
@@ -14225,6 +14323,7 @@ var _class = function () {
       scene.container.classList.add('active');
       this.actualScene = scene;
       this.options.onScene && this.options.onScene(scene);
+      this.trigger('scene', scene);
       anim.setSpeed(speed);
       if (reverse) {
         anim.goToAndStop(anim.totalFrames, true);
@@ -14238,6 +14337,7 @@ var _class = function () {
         anim.addEventListener('complete', function () {
           return _this2.play(index + 1);
         });
+        this.trigger('sceneFinish', scene);
         this.options.onFinishScene && this.options.onFinishScene(scene);
       }
     }
@@ -14248,20 +14348,22 @@ var _class = function () {
 
       if (!scene) {
         this.options.onFinish && this.options.onFinish();
+        this.trigger('finish');
         return;
       }
 
       if (scene.loop) {
+        this.trigger('sceneFinish', scene);
         this.options.onFinishScene && this.options.onFinishScene(scene);
       }
 
       this.play(this.index + 1);
     }
   }]);
-  return _class;
-}();
+  return Player;
+}(Event);
 
-return _class;
+return Player;
 
 })));
 //# sourceMappingURL=player.js.map

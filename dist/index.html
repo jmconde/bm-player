@@ -49,22 +49,39 @@
         };
 
     var player = new Player({
-        autoplay: true,
+        autoplay: 0.5,
         scenes: [introData, loopData, introReverseData],
         container: '#bodymovin',
-        onStart: () => console.log("Animation started"),
-        onScene: scene => {
-            if (scene.id === 'loop') {
-                setTimeout(function () {
-                    player.next();
-                }, 5000);
-            }
-            console.log("Animating scene", scene)
-        },
-        onFinishScene: () => console.log("Scene finished"),
-        onFinish: () => {
-            checkPlayer.play();
+        // onStart: () => console.log("Animation started"),
+        // onScene: scene => {
+        //     if (scene.id === 'loop') {
+        //         setTimeout(function () {
+        //             player.next();
+        //         }, 5000);
+        //     }
+        //     console.log("Animating scene", scene)
+        // },
+        // onFinishScene: () => console.log("Scene finished"),
+        // onFinish: () => {
+        //     checkPlayer.play();
+        // }
+    });
+
+    player.on('scene', scene => {
+        if (scene.id === 'loop') {
+            setTimeout(function () {
+                console.log("Service response");
+                player.next();
+            }, 10000);
         }
+        console.log("Animating scene", scene.id)
+    })
+    player.on('start', () => console.log("Animation 1 started."));
+    player.on('scene', scene => console.log("ONCE!"), true);
+    player.on('sceneFinish',  scene => console.log("Finishing scene", scene.id));
+    player.on('finish',  () => {
+        console.log("Animation 1 finisehd")
+        checkPlayer.play();
     });
 
     var checkPlayer = new Player({
@@ -72,6 +89,8 @@
         scenes: [checkData],
         container: '#check'
     });
+    checkPlayer.on('start', () => console.log("Animation 2 started."));
+    checkPlayer.on('finish', () => console.log("Animation 2 finisehd."));
 
 
     </script>
