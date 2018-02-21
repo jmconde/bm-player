@@ -1,6 +1,7 @@
-import bodymovin from './bodymovin';
+import bodymovin from 'lottie-web';
+// import bodymovin from './bodymovin';
 
-export class Player {
+export default class {
   constructor(options) {
     this.options = options;
     this.scenes = options.scenes;
@@ -63,13 +64,24 @@ export class Player {
       anim.goToAndStop(0, true);
       anim.setDirection(1);
     }
-    // anim.play();
+    anim.play();
     if (!scene.loop) {
       anim.addEventListener('complete', () => this.play(index + 1));
+      this.options.onFinishScene && this.options.onFinishScene(scene);
     }
   }
-
   next() {
+    var scene = this.scenes[this.index];
+
+    if (!scene) {
+      this.options.onFinish && this.options.onFinish();
+      return;
+    }
+
+    if (scene.loop) {
+      this.options.onFinishScene && this.options.onFinishScene(scene);
+    }
+
     this.play(this.index + 1);
   }
 }

@@ -48,7 +48,7 @@
             path: 'data/Check.json'
         };
 
-    var player = new Player.Player({
+    var player = new Player({
         autoplay: true,
         scenes: [introData, loopData, introReverseData],
         container: '#bodymovin',
@@ -61,12 +61,13 @@
             }
             console.log("Animating scene", scene)
         },
+        onFinishScene: () => console.log("Scene finished"),
         onFinish: () => {
             checkPlayer.play();
         }
     });
 
-    var checkPlayer = new Player.Player({
+    var checkPlayer = new Player({
         autoplay: false,
         scenes: [checkData],
         container: '#check'

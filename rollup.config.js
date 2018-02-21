@@ -10,6 +10,8 @@ export default{
     format: 'umd',
     name: 'Player'
   },
+  sourcemap: true,
+  treeshake: false,
   plugins: [
     resolve(),
     eslint({
