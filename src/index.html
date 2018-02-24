@@ -19,8 +19,7 @@
         #check {
             width:300px;
             height:300px;
-            border:2px solid #333;
-            top:0;
+            top:50px;
             left: calc(50% - 150px);
             opacity: 0;
         }
@@ -30,7 +29,7 @@
             height:400px;
             left: calc(50% - 200px);
         }
-        #check.animation-started {
+        #check.animation-playing {
             opacity: 1;
         }
         #bodymovin.animation-ended {
@@ -54,17 +53,17 @@
 
         var scenes = [{
             id: 'preloader',
-            path: './data/preloader.json',
-            loop: true
+            path: './data/gears.json',
+            loop: 1
         }, {
             id: "dogrun",
             path: "./data/dogrun.json",
             loop: true,
-            duration: 2
+            duration: 1
         }, {
             id: "star",
             path: "./data/star.json",
-            loop: 2
+            loop: 1
         }, {
             id: "bday",
             path: "./data/bday.json",
@@ -79,6 +78,10 @@
         }];
 
     var scenes2 = [{
+        id: 'rider',
+        path: './data/rey_updated.json',
+        loop: 2
+    }, {
         id: "check",
         path: "./data/checked_done.json",
         loop: false
@@ -87,20 +90,22 @@
     var player = new Player({
         autoplay: 0.5,
         scenes: scenes,
-        container: '#bodymovin'
+        container: '#bodymovin',
+        loop: false
     });
 
     player.on('scene', scene => {
         if (scene.id === 'preloader') {
             setTimeout(function () {
                 console.log("Service response");
-                player.play('star');
-            }, 2000);
+                player.play('dogrun');
+            }, 5000);
         }
         console.log("Animating scene", scene.id)
-    })
+    });
     player.on('start', () => console.log("Animation 1 started."));
     player.on('scene', scene => console.log("ONCE!"), true);
+    player.on('loopComplete',  () => console.log("Loop completed"));
     player.on('sceneFinish',  scene => console.log("Finishing scene", scene.id));
     player.on('finish',  () => {
         console.log("Animation 1 finisehd")

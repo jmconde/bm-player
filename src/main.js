@@ -3,6 +3,7 @@ import isNumber from 'lodash/isnumber';
 import isString from 'lodash/isstring';
 import isBoolean from 'lodash/isboolean';
 import defaultTo from 'lodash/defaultto';
+import isUndefined from 'lodash/isundefined';
 import find from 'lodash/find';
 import { Event } from './event';
 
@@ -33,7 +34,7 @@ if (!Array.prototype.findIndex) {
 
 /**
  * A player to run lottie-web animations.
- * 
+ *
  * @class Player
  * @extends {Event}
  */
@@ -49,25 +50,12 @@ class Player extends Event {
     super();
     this.options = options;
     this.scenes = options.scenes;
-    this._anims = [];
     this._el = document.querySelector(options.container);
     this._index = 0;
 
-    this._el.classList.add('player')
+    this._el.classList.add('player');
 
-    // Prepare scenes
-    options.scenes.forEach((s, i) => {
-      var div = document.createElement('div');
-
-      div.classList.add('scene', `scene-${i}`, `scene-${s.id}`);
-      this._el.appendChild(div);
-      s.renderer = this.options.renderer || 'svg';
-      s.prerender = !!this.options.prerender;
-      s.container = div;
-      s.autoplay = false;
-      s.index = i;
-      this._anims[i] = bodymovin.loadAnimation(s);
-    });
+    this._prepareScenes();
 
     if (isBoolean(options.autoplay) && options.autoplay) {
       this.play(this._index);
@@ -79,7 +67,7 @@ class Player extends Event {
 
   /**
    * Plays a specific animation
-   * 
+   *
    * @param {String|Number} index Scene index or id.
    * @returns {undefined}
    * @memberof Player
@@ -89,40 +77,27 @@ class Player extends Event {
 
     if (this.timer) { clearTimeout(this.timer); }
 
-    if (isString(index)) {
-      scene = this._getSceneFromId(index);
-    } else {
-      index = isNumber(index) ? index : 0;
+    scene = this._getScene(index);
 
-      if (index === 0) {
-        this.trigger('start');
-        this._el.classList.add('animation-started');
-        this._el.classList.remove('animation-ended');
-      }
-
-      scene = this.scenes[index];
+    if (isUndefined(scene)) {
+      throw new Error(`Scene '${index}' undefined.`);
     }
-
-    if (!scene) {
-      this.trigger('finish');
-      this._el.classList.remove('animation-started');
-      this._el.classList.add('animation-ended');
-      return;
-    }
+    console.log('scene', scene);
 
     this._index = scene.index;
 
-    anim = this._anims[scene.index];
+    anim = scene.animation;
     speed = defaultTo(scene.speed, 1);
     reverse = defaultTo(scene.reverse, false);
 
     if (this.actualScene) {
       this.actualScene.container.classList.remove('active');
+      this.actualScene.animation.stop();
     }
 
     scene.container.classList.add('active');
     this.actualScene = scene;
-    this.trigger('scene', scene);
+
     anim.setSpeed(speed);
     if (reverse) {
       anim.goToAndStop(anim.totalFrames, true);
@@ -131,19 +106,12 @@ class Player extends Event {
       anim.goToAndStop(0, true);
       anim.setDirection(1);
     }
-    anim.play();
 
-    if (!scene.loop) {
-      anim.addEventListener('complete', () => this._triggerSceneFinish(scene));
-    } else if (isNumber(scene.loop)) {
-      this.counter = 0;
-      anim.addEventListener('loopComplete', () => {
-        this.counter++;
-        if (this.counter >= scene.loop) { this._triggerSceneFinish(scene) }
-      })
-    } else if (isNumber(scene.duration)) {
-      this.timer = setTimeout(() => this._triggerSceneFinish(scene), scene.duration * 1000);
-    }
+    this._setFinishScenario(scene);
+
+    this.trigger('scene', scene);
+    scene.playing = true;
+    anim.play();
   }
 
   next() {
@@ -161,11 +129,106 @@ class Player extends Event {
     this.play(this._index + 1);
   }
 
-  _triggerSceneFinish(scene) {
-    // scene.container.classList.remove('active');
-    // this.anims[index].stop();
-    this.play(scene.index + 1);
+  _setFinishScenario(scene) {
+    if (isBoolean(scene.loop) && !scene.loop) {
+      console.log('scenario 1');
+      this._setEventListener(scene, 'complete', this._sceneFinishListener);
+    } else if (isNumber(scene.iterations)) {
+      console.log('scenario 2');
+      this.counter = 0;
+      this._setEventListener(scene, 'loopComplete', this._loopIterationsListener);
+    } else if (isNumber(scene.duration)) {
+      console.log('scenario 3');
+      this.timer = setTimeout(() => this._sceneFinish(scene), scene.duration * 1000);
+    } else {
+      this._setEventListener(scene, 'loopComplete', this._loopIterationsListener);
+    }
+  }
+
+  _loopIterationsListener () {
+    var scene = this.actualScene;
+
+    this.counter++;
+    this.trigger('loopComplete');
+    if (!isUndefined(scene.iterations)) {
+      if (this.counter >= scene.iterations) { this._sceneFinish(scene); }
+    }
+  }
+  _sceneFinishListener() {
+    this._sceneFinish(this.actualScene);
+  }
+
+  _hasMoreScenes(scene) {
+    return !isUndefined(this.scenes[scene.index + 1]);
+  }
+
+  _getScene(index) {
+    if (isString(index)) {
+      return this._getSceneFromId(index);
+    } else {
+      index = isNumber(index) ? index : 0;
+
+      if (index === 0) {
+        this.trigger('start');
+        this._el.classList.add('animation-playing');
+        this._el.classList.remove('animation-ended');
+      }
+
+      return  this.scenes[index];
+    }
+  }
+
+  _setEventListener(scene, evnt, fn) {
+    scene.listeners.push(scene.animation.addEventListener(evnt, fn.bind(this)));
+  }
+
+  _prepareScenes() {
+    // Prepare scenes
+    this.options.scenes.forEach((s, i) => {
+      var div = document.createElement('div');
+
+      div.classList.add('scene', `scene-${i}`, `scene-${s.id}`);
+      this._el.appendChild(div);
+      s.renderer = this.options.renderer || 'svg';
+      s.prerender = !!this.options.prerender;
+      s.container = div;
+      s.autoplay = false;
+      s.index = i;
+      s.player = this;
+      s.listeners = [];
+      if (isNumber(s.loop)) {
+        s.iterations = s.loop;
+        s.loop = true;
+      }
+
+      s.animation = bodymovin.loadAnimation(s);
+    });
+  }
+
+  _sceneFinish(scene) {
+    scene.listeners.forEach(fn => fn.call());
     this.trigger('sceneFinish', scene);
+    scene.playing = false;
+    // scene.animation.stop();
+
+    if (this._hasMoreScenes(scene)) {
+      scene.container.classList.remove('active');
+      this.play(scene.index + 1);
+    } else if (!this.options.loop) {
+      this.trigger('finish');
+      this._el.classList.remove('animation-playing');
+      this._el.classList.add('animation-ended');
+    } else {
+      this.play(0);
+    }
+    // if (!this.options.loop) {
+    //   this.trigger('finish');
+    //   this._el.classList.remove('animation-playing');
+    //   this._el.classList.add('animation-ended');
+    //   return;
+    // } else {
+    //   scene = this.scenes[0];
+    // }
   }
 
   _getSceneFromId(id) {

@@ -28,6 +28,7 @@ autoplay: 0.5,
 @param {Array}    scenes    required
 @param {String}   container      required
 @param {Boolean|Number}  autoplay   default: false if number set it is a delay in seconds
+@param {Boolean}  loop
 **/
 ```
 
