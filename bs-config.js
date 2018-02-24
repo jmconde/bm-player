@@ -25,6 +25,6 @@ module.exports = {
 
   server: {
     baseDir: 'dist',
-    directory: true
+    index: 'index.html'
   }
 };

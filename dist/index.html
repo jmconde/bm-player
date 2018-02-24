@@ -4,75 +4,98 @@
 <head>
 
     <style>
+        #container {
+            position: relative;
+            
+        }
+
+        #bodymovin, #check {
+            position: absolute;
+            top: 0;
+            transition: all 0.5s;
+            transform-origin: center center;
+        }
 
         #check {
-            transition: all 0.5s;
+            width:300px;
+            height:300px;
+            border:2px solid #333;
+            top:0;
+            left: calc(50% - 150px);
+            opacity: 0;
+        }
+        
+        #bodymovin {
+            width:400px;
+            height:400px;
+            left: calc(50% - 200px);
+        }
+        #check.animation-started {
+            opacity: 1;
+        }
+        #bodymovin.animation-ended {
+            transform: scale(0);
         }
     </style>
     <link rel="stylesheet" href="styles.css">
 </head>
 
-<body style="background-color:#ccc; margin: 0px;height: 100%; font-family: sans-serif;font-size: 10px">
+<body style="background-color:palegreen; margin: 0px;height: 100%; font-family: sans-serif;font-size: 10px">
 
-    <div style="width:400px;height:400px;margin:50px auto 0;;background-color:#333;" id="bodymovin">
-    </div>
-
-    <div style="width:300px;height:300px;margin:50px auto 0;border:2px solid #333;" id="check">
+    <div id="container">
+        <div id="bodymovin">
+        </div>
+        <div id="check">
+        </div>
     </div>
     <script src="player.js"></script>
 
     <script>
-        var introData = {
-            id: 'intro',
-            loop: false,
-            path: 'data/Intro.json'
-        };
 
-        var introReverseData = {
-            id: 'intro-reverse',
-            loop: false,
-            path: 'data/Intro.json',
-            reverse: true
-        };
-
-        var loopData = {
-            id: 'loop',
+        var scenes = [{
+            id: 'preloader',
+            path: './data/preloader.json',
+            loop: true
+        }, {
+            id: "dogrun",
+            path: "./data/dogrun.json",
             loop: true,
-            path: 'data/Loop.json',
-            speed: 1.2
-        };
-
-        var checkData = {
-            id: 'check',
+            duration: 2
+        }, {
+            id: "star",
+            path: "./data/star.json",
+            loop: 2
+        }, {
+            id: "bday",
+            path: "./data/bday.json",
+            loop: false
+        },
+        {
+            id: "bdayInverse",
+            path: "./data/bday.json",
             loop: false,
-            path: 'data/Check.json'
-        };
+            reverse: true,
+            speed: 0.7
+        }];
+
+    var scenes2 = [{
+        id: "check",
+        path: "./data/checked_done.json",
+        loop: false
+    }]
 
     var player = new Player({
         autoplay: 0.5,
-        scenes: [introData, loopData, introReverseData],
-        container: '#bodymovin',
-        // onStart: () => console.log("Animation started"),
-        // onScene: scene => {
-        //     if (scene.id === 'loop') {
-        //         setTimeout(function () {
-        //             player.next();
-        //         }, 5000);
-        //     }
-        //     console.log("Animating scene", scene)
-        // },
-        // onFinishScene: () => console.log("Scene finished"),
-        // onFinish: () => {
-        //     checkPlayer.play();
-        // }
+        scenes: scenes,
+        container: '#bodymovin'
     });
 
     player.on('scene', scene => {
-        if (scene.id === 'loop') {
+        if (scene.id === 'preloader') {
             setTimeout(function () {
                 console.log("Service response");
-                player.next();
-            }, 10000);
+                player.play('star');
+            }, 2000);
         }
         console.log("Animating scene", scene.id)
     })
@@ -86,7 +109,7 @@
 
     var checkPlayer = new Player({
         autoplay: false,
-        scenes: [checkData],
+        scenes: scenes2,
         container: '#check'
     });
     checkPlayer.on('start', () => console.log("Animation 2 started."));
