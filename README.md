@@ -1,4 +1,4 @@
-# ANIMATION PLAYER v0.0.1
+# BODYMOVIN PLAYER v0.1.0
 
 ## Installing
 
@@ -28,7 +28,8 @@ autoplay: 0.5,
 @param {Array}    scenes    required
 @param {String}   container      required
 @param {Boolean|Number}  autoplay   default: false if number set it is a delay in seconds
-@param {Boolean}  loop
+@param {Boolean|Number}  loop
+@param {Player}   chain
 **/
 ```
 

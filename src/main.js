@@ -51,6 +51,9 @@ class Player extends Event {
     this.options = options;
     this.scenes = options.scenes;
     this._el = document.querySelector(options.container);
+    if (isNumber(this.options.loop)) {
+      this.animationCount = 0;
+    }
     this._index = 0;
 
     this._el.classList.add('player');
@@ -75,6 +78,7 @@ class Player extends Event {
   play(index) {
     var scene, anim, speed, reverse;
 
+
     if (this.timer) { clearTimeout(this.timer); }
 
     scene = this._getScene(index);
@@ -82,7 +86,6 @@ class Player extends Event {
     if (isUndefined(scene)) {
       throw new Error(`Scene '${index}' undefined.`);
     }
-    console.log('scene', scene);
 
     this._index = scene.index;
 
@@ -93,7 +96,15 @@ class Player extends Event {
     if (this.actualScene) {
       this.actualScene.container.classList.remove('active');
       this.actualScene.animation.stop();
+
+      if (this.paused || this.playing) {
+        this._cleanSceneListeners(this.actualScene);
+      }
     }
+
+    this.paused = false;
+    this.stopped = false;
+    this.playing = true;
 
     scene.container.classList.add('active');
     this.actualScene = scene;
@@ -114,31 +125,48 @@ class Player extends Event {
     anim.play();
   }
 
-  next() {
-    var scene = this.scenes[this._index];
-
-    if (!scene) {
-      this.trigger('finish');
-      return;
+  stop () {
+    if (!this.stopped && this.actualScene) {
+      if (this.timer) { clearTimeout(this.timer); }
+      this.stopped = true;
+      this._cleanSceneListeners(this.actualScene);
+      this.actualScene.container.classList.remove('active');
+      this.actualScene.animation.stop();
+      this._index = 0;
+      this.scenes[0].container.classList.add('active');
     }
+  }
+
+  pause () {
+    if (!this.paused) {
+      this.actualScene.animation.pause();
+      this.paused = true;
+    } else {
+      this.actualScene.animation.play();
+      this.paused = false;
+    }
+  }
+
+  next() {
+    var scene = this.actualScene;
 
     if (scene.loop && !isNumber(scene.loop)) {
-      this.trigger('sceneFinish', scene);
+      this.trigger('sceneComplete', scene);
     }
 
     this.play(this._index + 1);
   }
 
+  _cleanSceneListeners(scene) {
+    scene.listeners.forEach(fn => fn.call());
+  }
   _setFinishScenario(scene) {
     if (isBoolean(scene.loop) && !scene.loop) {
-      console.log('scenario 1');
       this._setEventListener(scene, 'complete', this._sceneFinishListener);
     } else if (isNumber(scene.iterations)) {
-      console.log('scenario 2');
       this.counter = 0;
       this._setEventListener(scene, 'loopComplete', this._loopIterationsListener);
     } else if (isNumber(scene.duration)) {
-      console.log('scenario 3');
       this.timer = setTimeout(() => this._sceneFinish(scene), scene.duration * 1000);
     } else {
       this._setEventListener(scene, 'loopComplete', this._loopIterationsListener);
@@ -206,29 +234,41 @@ class Player extends Event {
   }
 
   _sceneFinish(scene) {
-    scene.listeners.forEach(fn => fn.call());
-    this.trigger('sceneFinish', scene);
+    this._cleanSceneListeners(scene);
+    this.trigger('sceneComplete', scene);
+    scene.listeners = [];
     scene.playing = false;
     // scene.animation.stop();
 
     if (this._hasMoreScenes(scene)) {
       scene.container.classList.remove('active');
       this.play(scene.index + 1);
-    } else if (!this.options.loop) {
-      this.trigger('finish');
-      this._el.classList.remove('animation-playing');
-      this._el.classList.add('animation-ended');
+    } else if (isUndefined(this.options.loop) || (isBoolean(this.options.loop) && !this.options.loop)) {
+      this._complete();
+      if (this.options.chain instanceof Player) {
+        this.options.chain.play();
+      }
     } else {
+      if (isNumber(this.animationCount)) {
+        if (this.animationCount === (this.options.loop - 1)) {
+          this._complete();
+          if (this.options.chain instanceof Player) {
+            this.options.chain.play();
+          }
+          return;
+        }
+        this.animationCount++;
+      }
+
       this.play(0);
     }
-    // if (!this.options.loop) {
-    //   this.trigger('finish');
-    //   this._el.classList.remove('animation-playing');
-    //   this._el.classList.add('animation-ended');
-    //   return;
-    // } else {
-    //   scene = this.scenes[0];
-    // }
+  }
+
+  _complete() {
+    this.trigger('complete');
+    this.playing = false;
+    this._el.classList.remove('animation-playing');
+    this._el.classList.add('animation-ended');
   }
 
   _getSceneFromId(id) {

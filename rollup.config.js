@@ -8,7 +8,7 @@ import chalk from 'chalk';
 export default{
   input: './src/main.js',
   output: {
-    file: './dist/player.js',
+    file: './dist/bm-player.js',
     format: 'umd',
     name: 'Player',
     sourcemap: true

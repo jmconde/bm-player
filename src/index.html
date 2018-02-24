@@ -6,7 +6,7 @@
     <style>
         #container {
             position: relative;
-            
+
         }
 
         #bodymovin, #check {
@@ -23,10 +23,10 @@
             left: calc(50% - 150px);
             opacity: 0;
         }
-        
+
         #bodymovin {
-            width:400px;
-            height:400px;
+            width:200px;
+            height:200px;
             left: calc(50% - 200px);
         }
         #check.animation-playing {
@@ -40,14 +40,16 @@
 </head>
 
 <body style="background-color:palegreen; margin: 0px;height: 100%; font-family: sans-serif;font-size: 10px">
-
+    <a href="javascript:player.play()">Play()</a>
+    <a href="javascript:player.stop()">Stop()</a>
+    <a href="javascript:player.pause()">Pause()</a>
     <div id="container">
         <div id="bodymovin">
         </div>
         <div id="check">
         </div>
     </div>
-    <script src="player.js"></script>
+    <script src="bm-player.js"></script>
 
     <script>
 
@@ -87,30 +89,6 @@
         loop: false
     }]
 
-    var player = new Player({
-        autoplay: 0.5,
-        scenes: scenes,
-        container: '#bodymovin',
-        loop: false
-    });
-
-    player.on('scene', scene => {
-        if (scene.id === 'preloader') {
-            setTimeout(function () {
-                console.log("Service response");
-                player.play('dogrun');
-            }, 5000);
-        }
-        console.log("Animating scene", scene.id)
-    });
-    player.on('start', () => console.log("Animation 1 started."));
-    player.on('scene', scene => console.log("ONCE!"), true);
-    player.on('loopComplete',  () => console.log("Loop completed"));
-    player.on('sceneFinish',  scene => console.log("Finishing scene", scene.id));
-    player.on('finish',  () => {
-        console.log("Animation 1 finisehd")
-        checkPlayer.play();
-    });
 
     var checkPlayer = new Player({
         autoplay: false,
@@ -118,7 +96,34 @@
         container: '#check'
     });
     checkPlayer.on('start', () => console.log("Animation 2 started."));
-    checkPlayer.on('finish', () => console.log("Animation 2 finisehd."));
+    checkPlayer.on('complete', () => console.log("Animation 2 finisehd."));
+
+    var player = new Player({
+        autoplay: 0.5,
+        scenes: scenes,
+        container: '#bodymovin',
+        loop: 2,
+        chain: checkPlayer
+    });
+
+    player.on('scene', scene => {
+        if (scene.id === 'preloader') {
+            setTimeout(function () {
+                console.log("Service response");
+                // player.play('dogrun');
+            }, 5000);
+        }
+        console.log("Animating scene", scene.id)
+    });
+    player.on('start', () => console.log("Animation 1 started."));
+    player.on('scene', scene => console.log("ONCE!"), true);
+    player.on('loopComplete',  () => console.log("Loop completed"));
+    player.on('sceneComplete',  scene => console.log("Finishing scene", scene.id));
+    player.on('complete',  () => {
+        console.log("Animation 1 finisehd")
+        // checkPlayer.play();
+    });
+
 
 
     </script>
