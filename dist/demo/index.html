@@ -35,45 +35,66 @@
         #bodymovin.animation-ended {
             transform: scale(0);
         }
+
+        button {
+            background: #3498db;
+            background-image: linear-gradient(to bottom, #3498db, #2980b9);
+            border-radius: 5px;
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 15px;
+            padding: 5px 10px 5px 10px;
+            text-decoration: none;
+            outline: none;
+            border: none;
+        }
+
+        button:hover {
+            background: #3cb0fd;
+            background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+            text-decoration: none;
+        }
     </style>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../bm-player.css">
 </head>
 
 <body style="background-color:palegreen; margin: 0px;height: 100%; font-family: sans-serif;font-size: 10px">
-    <a href="javascript:player.play()">Play()</a>
-    <a href="javascript:player.stop()">Stop()</a>
-    <a href="javascript:player.pause()">Pause()</a>
+    <div style="margin: 10px 0 0 20px;">
+        <button onclick="player.play()">Play</button>
+        <button onclick="player.stop()">Stop</button>
+        <button onclick="player.pause()">Toggle Pause</button>
+    </div>
     <div id="container">
         <div id="bodymovin">
         </div>
         <div id="check">
         </div>
     </div>
-    <script src="bm-player.js"></script>
+    <script src="../bm-player.js"></script>
 
     <script>
-
+https://raw.githubusercontent.com/jmconde/samples/master/lotties/balls.json
         var scenes = [{
             id: 'preloader',
-            path: './data/gears.json',
+            path: 'https://raw.githubusercontent.com/jmconde/samples/master/lotties/gears.json',
             loop: 1
         }, {
             id: "dogrun",
-            path: "./data/dogrun.json",
+            path: "https://raw.githubusercontent.com/jmconde/samples/master/lotties/dogrun.json",
             loop: true,
             duration: 1
         }, {
             id: "star",
-            path: "./data/star.json",
+            path: "https://raw.githubusercontent.com/jmconde/samples/master/lotties/star.json",
             loop: 1
         }, {
             id: "bday",
-            path: "./data/bday.json",
+            path: "https://raw.githubusercontent.com/jmconde/samples/master/lotties/bday.json",
             loop: false
         },
         {
             id: "bdayInverse",
-            path: "./data/bday.json",
+            path: "https://raw.githubusercontent.com/jmconde/samples/master/lotties/bday.json",
             loop: false,
             reverse: true,
             speed: 0.7
@@ -81,16 +102,16 @@
 
     var scenes2 = [{
         id: 'rider',
-        path: './data/rey_updated.json',
+        path: 'https://raw.githubusercontent.com/jmconde/samples/master/lotties/rey_updated.json',
         loop: 2
     }, {
         id: "check",
-        path: "./data/checked_done.json",
+        path: "https://raw.githubusercontent.com/jmconde/samples/master/lotties/checked_done.json",
         loop: false
     }]
 
 
-    var checkPlayer = new Player({
+    var checkPlayer = new BMPlayer({
         autoplay: false,
         scenes: scenes2,
         container: '#check'
@@ -98,7 +119,7 @@
     checkPlayer.on('start', () => console.log("Animation 2 started."));
     checkPlayer.on('complete', () => console.log("Animation 2 finisehd."));
 
-    var player = new Player({
+    var player = new BMPlayer({
         autoplay: 0.5,
         scenes: scenes,
         container: '#bodymovin',

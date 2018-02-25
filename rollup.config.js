@@ -6,11 +6,11 @@ import uglify from 'rollup-plugin-uglify';
 import chalk from 'chalk';
 
 export default{
-  input: './src/main.js',
+  input: './src/entry.js',
   output: {
     file: './dist/bm-player.js',
     format: 'umd',
-    name: 'Player',
+    name: 'BMPlayer',
     sourcemap: true
   },
   treeshake: false,

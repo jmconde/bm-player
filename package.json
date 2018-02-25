@@ -5,9 +5,9 @@
   "main": "dist/bm-player.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c",
-    "start": "node tools",
-    "server": "browser-sync start --config \"bs-config.js\""
+    "build": "node tools",
+    "demo": "node tools --server",
+    "start": "node tools --server --watch"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +25,8 @@
     "http-server": "^0.11.1",
     "lodash": "^4.17.5",
     "lottie-web": "^5.1.7",
+    "minimist": "^1.2.0",
+    "node-sass": "^4.7.2",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^8.3.0",
     "rollup-plugin-eslint": "^4.0.0",

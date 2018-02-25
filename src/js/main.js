@@ -56,7 +56,7 @@ class Player extends Event {
     }
     this._index = 0;
 
-    this._el.classList.add('player');
+    this._el.classList.add('bm-player');
 
     this._prepareScenes();
 

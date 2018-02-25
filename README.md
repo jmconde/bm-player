@@ -1,28 +1,34 @@
 # BODYMOVIN PLAYER v0.1.0
 
-## Installing project
+This project allows to chain After Effects lottie-web (bodymovin) plugin animations like a movie's storyboard.
 
-```javascript
-git clone git@github.com:jmconde/bm-player.git
 
-npm i -g rollup
+## Install module
 
-npm i -g browser-sync
-
-npm install
+```
+npm i bm-player --save
 ```
 
-## Running demo
-```
-npm start
-```
+## Demo
+
+See index.html in ```dist/demo``` directory.
 
 ## Documentation
 
-### Player
-autoplay: 0.5,
-        scenes: scenes,
-        container: '#bodymovin'
+```
+import BMPlayer from 'bm-player';
+-or-
+var BMPlayer = require('bm-player');
+-or-
+window.BMPlayer
+```
+
+```
+new BMPlayer(<options>);
+```
+
+
+### Player Options
 ```javascript
 /**
 @param {Array}    scenes    required
@@ -33,7 +39,7 @@ autoplay: 0.5,
 **/
 ```
 
-### Scenes
+### Scene Options
 
 ```javascript
 /**
@@ -45,9 +51,31 @@ autoplay: 0.5,
 @param {Number}   speed
 **/
 ```
+### Public Methods
+
+* play(```undefined``` | index | id)
+* stop()
+* pause()
+* next()
 
 ### Events
 * start
-* finish
+* complete
 * scene
-* sceneFinish
+* sceneComplete
+* loopComplete
+
+
+## Contributing
+
+```javascript
+git clone git@github.com:jmconde/bm-player.git
+
+npm i -g rollup
+
+npm i -g browser-sync
+
+npm install
+```
+
+Make your changes and create a pull request! =)
