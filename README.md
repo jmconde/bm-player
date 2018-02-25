@@ -1,9 +1,9 @@
 # BODYMOVIN PLAYER v0.1.0
 
-## Installing
+## Installing project
 
 ```javascript
-git clone ssh://git@globaldevtools.bbva.com:7999/~josemanuel.conde.campo/animation-player.git
+git clone git@github.com:jmconde/bm-player.git
 
 npm i -g rollup
 
@@ -12,7 +12,7 @@ npm i -g browser-sync
 npm install
 ```
 
-## Running
+## Running Demo
 ```
 npm start
 ```
