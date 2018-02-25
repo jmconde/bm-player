@@ -12,7 +12,7 @@ npm i -g browser-sync
 npm install
 ```
 
-## Running Demo
+## Running demo
 ```
 npm start
 ```
