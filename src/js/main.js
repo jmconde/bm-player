@@ -50,7 +50,7 @@ class Player extends Event {
     super();
     this.options = options;
     this.scenes = options.scenes;
-    this._el = document.querySelector(options.container);
+    this._el = typeof options.container === 'string' ? document.querySelector(options.container) : options.container;
     if (isNumber(this.options.loop)) {
       this.animationCount = 0;
     }

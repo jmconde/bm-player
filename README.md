@@ -1,4 +1,4 @@
-# BODYMOVIN PLAYER v0.1.1
+# BODYMOVIN PLAYER v0.1.2
 
 This project allows to chain After Effects lottie-web (bodymovin) plugin animations like a movie's storyboard.
 

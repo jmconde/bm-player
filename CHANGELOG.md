@@ -1,10 +1,10 @@
 
 # Changelog
 
-## [0.1.0] - 24/02/2018
+## [0.1.2] - 14/08/2018
 
-### Added
-- BM Player has born!
+## Modified
+- container now supports element object or css-ish selector string.
 
 ## [0.1.1] - 25/02/2018
 
@@ -12,3 +12,8 @@
 - Demo files now hosted in github.
 - Added SASS.
 - Better project organization.
+
+## [0.1.0] - 24/02/2018
+
+### Added
+- BM Player has born!
