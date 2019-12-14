@@ -1,6 +1,6 @@
 {
   "name": "bm-player",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/bm-player.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "fs-extra": "^5.0.0",
     "http-server": "^0.11.1",
     "lodash": "^4.17.5",
-    "lottie-web": "^5.1.7",
+    "lottie-web": "^5.5.10",
     "minimist": "^1.2.0",
     "node-sass": "^4.7.2",
     "rollup-plugin-babel": "^3.0.3",
