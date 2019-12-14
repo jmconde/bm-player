@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [0.2.0] - 14/12/2019
+- updated lottie version
+
 ## [0.1.2] - 14/08/2018
 
 ## Modified

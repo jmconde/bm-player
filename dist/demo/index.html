@@ -58,10 +58,11 @@
     <link rel="stylesheet" href="../bm-player.css">
 </head>
 
-<body style="background-color:palegreen; margin: 0px;height: 100%; font-family: sans-serif;font-size: 10px">
+<body style="margin: 0px;height: 100%; font-family: sans-serif;font-size: 10px">
     <div style="margin: 10px 0 0 20px;">
         <button onclick="player.play()">Play</button>
         <button onclick="player.stop()">Stop</button>
+        <button onclick="player.pause()">Toggle Pause</button>
         <button onclick="player.pause()">Toggle Pause</button>
     </div>
     <div id="container">
@@ -73,11 +74,10 @@
     <script src="../bm-player.js"></script>
 
     <script>
-https://raw.githubusercontent.com/jmconde/samples/master/lotties/balls.json
         var scenes = [{
             id: 'preloader',
             path: 'https://raw.githubusercontent.com/jmconde/samples/master/lotties/gears.json',
-            loop: 1
+            loop: true
         }, {
             id: "dogrun",
             path: "https://raw.githubusercontent.com/jmconde/samples/master/lotties/dogrun.json",
@@ -123,7 +123,7 @@ https://raw.githubusercontent.com/jmconde/samples/master/lotties/balls.json
         autoplay: 0.5,
         scenes: scenes,
         container: document.querySelector('#bodymovin'),
-        loop: 2,
+        loop: true,
         chain: checkPlayer
     });
 
@@ -132,7 +132,8 @@ https://raw.githubusercontent.com/jmconde/samples/master/lotties/balls.json
             setTimeout(function () {
                 console.log("Service response");
                 // player.play('dogrun');
-            }, 5000);
+                player.next();
+            }, 1000);
         }
         console.log("Animating scene", scene.id)
     });
