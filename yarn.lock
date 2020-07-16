@@ -2385,8 +2385,8 @@ lodash@^3.10.1:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
 lodash@^4.0.0, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@~4.17.10:
-  version "4.17.10"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
 
 loose-envify@^1.0.0:
   version "1.4.0"
@@ -2394,9 +2394,9 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-lottie-web@^5.1.7:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/lottie-web/-/lottie-web-5.2.1.tgz#08aba142d815b4540e5af0c180e93dfff3e9a51d"
+lottie-web@^5.5.10:
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/lottie-web/-/lottie-web-5.7.0.tgz#628421df7a43c20a5171ac65bdc7bb4c499f8f37"
 
 loud-rejection@^1.0.0:
   version "1.6.0"
