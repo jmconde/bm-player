@@ -965,8 +965,8 @@ chokidar@^2.0.2:
     fsevents "^1.2.2"
 
 chownr@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.0.1.tgz#e2a75042a9551908bebd25b8523d5f9769d79181"
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.4.tgz#6fc9d7b42d32a583596337666e7d08084da2cc6b"
 
 circular-json@^0.3.1:
   version "0.3.3"
@@ -2394,9 +2394,9 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-lottie-web@^5.1.7:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/lottie-web/-/lottie-web-5.2.1.tgz#08aba142d815b4540e5af0c180e93dfff3e9a51d"
+lottie-web@^5.5.10:
+  version "5.8.1"
+  resolved "https://registry.yarnpkg.com/lottie-web/-/lottie-web-5.8.1.tgz#807e0af0ad22b59bf867d964eb684cb3368da0ef"
 
 loud-rejection@^1.0.0:
   version "1.6.0"
